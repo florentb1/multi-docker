@@ -1,0 +1,57 @@
+Create react app:
+npx create-react-app client
+
+Delete in the client directory the git init
+rm -r .git
+
+Go on client project then
+docker build -f Dockerfile.dev .
+
+then
+
+docker run -it containerid
+
+-- POSTGRESQL --
+in docker-compose.yml
+version: '3'
+services:
+  postgres:
+    image: 'postgres:latest'
+
+then
+docker-composer up 
+And it's good !
+
+Add configurations variables
+it's environment variables also use for postgre db for example.
+
+variableName=value => Sets a variable in the container at run time. Only when the container is started up.
+variableName => Value is talen from your computer
+
+We always want to use the syntax variableName=value
+
+Basic environment variables for postgres:
+environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+
+-- Nginx --
+
+Nginx server will take care of the routing.
+Sending the request starting by /api/ to the express server and the other requests to the / server.
+
+default.conf permits us to split the calls.
+
+upstream api {
+	server api:5000;
+} Cela veut dire que nous allons apeller le service api sur le port 5000.
+
+
+-- DEPLOYMENT --
+
+The goal is to push with travis the image to docker hub. Then the hosting provider will download the personalized docker image and run it.
