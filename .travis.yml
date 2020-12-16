@@ -1,0 +1,24 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t florentb1/react-test -f ./client/Dockerfile.dev
+
+script:
+  - docker run florentb1/react-test npm test -- --coverage
+  - docker run -e CI=true florentb1/react-test npm test
+
+after_success:
+  - docker build -t florentb1/multi-client ./client
+  - docker build -t florentb1/multi-nginx ./nginx
+  - docker build -t florentb1/multi-server ./server
+  - docker build -t florentb1/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # Take those images and push them to docker hub
+  - docker push florentb1/multi-client
+  - docker push florentb1/multi-nginx
+  - docker push florentb1/multi-server
+  - docker push florentb1/multi-worker
